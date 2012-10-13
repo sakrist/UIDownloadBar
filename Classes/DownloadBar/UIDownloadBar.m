@@ -1,9 +1,9 @@
 //
 //  UIDownloadBar.m
-//  Old Radio
+//  UIDownloadBar
 //
-//  Created by Yuliya Sosnenko on 7/8/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
+//  Created by SAKrisT on 7/8/10.
+//  Copyright 2010 www.developers-life.com. All rights reserved.
 //
 
 #import "UIDownloadBar.h"
@@ -18,7 +18,6 @@ delegate,
 percentComplete,
 operationIsOK,
 appendIfExist,
-//fileUrlPath,
 possibleFilename;
 
 - (void) forceStop {
@@ -28,7 +27,7 @@ possibleFilename;
 - (void) forceContinue {
 	operationBreaked = NO;
 	
-	NSLog(@"%f",bytesReceived);
+//	NSLog(@"%f",bytesReceived);
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: downloadUrl];
 	
 	[request addValue: [NSString stringWithFormat: @"bytes=%.0f-", bytesReceived ] forHTTPHeaderField: @"Range"];	
@@ -88,10 +87,6 @@ possibleFilename;
 	[connection release];
 }
 
-//- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-//	expectedBytes = [response expectedContentLength];
-//	NSLog(@"DID RECEIVE RESPONSE");
-//}
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
 	
@@ -128,7 +123,6 @@ possibleFilename;
 	[self.delegate downloadBar:self didFinishWithData:self.receivedData suggestedFilename:localFilename];
 	operationFinished = YES;
 	NSLog(@"Connection did finish loading...");
-	//[connection release];
 }
 
 
@@ -137,7 +131,6 @@ possibleFilename;
 	[localFilename release];
 	[receivedData release];
 	[DownloadRequest release];
-//	[DownloadConnection release];
 	[super dealloc];
 }
 

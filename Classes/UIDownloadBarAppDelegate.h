@@ -2,7 +2,7 @@
 //  UIDownloadBarAppDelegate.h
 //  UIDownloadBar
 //
-//  Created by Yuliya Sosnenko on 4/28/10.
+//  Created by SAKrisT on 4/28/10.
 //  Copyright __MyCompanyName__ 2010. All rights reserved.
 //
 

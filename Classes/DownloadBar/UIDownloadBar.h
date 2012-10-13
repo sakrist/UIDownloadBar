@@ -1,9 +1,9 @@
 //
 //  UIDownloadBar.h
-//  Old Radio
+//  UIDownloadBar
 //
-//  Created by Yuliya Sosnenko on 7/8/10.
-//  Copyright 2010 __MyCompanyName__. All rights reserved.
+//  Created by SAKrisT on 7/8/10.
+//  Copyright 2010 www.developers-life.com. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -37,7 +37,6 @@
 
 @property (assign) BOOL operationIsOK;
 @property (assign) BOOL appendIfExist;
-//@property (nonatomic, copy) NSString *fileUrlPath;
 
 @property (nonatomic, readonly) NSMutableData* receivedData;
 @property (nonatomic, readonly, retain) NSURLRequest* DownloadRequest;

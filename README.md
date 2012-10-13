@@ -35,7 +35,7 @@ How to use:
 
 ---
 
-Version 1.0
+Version 1.2
 
 License: BSD
 
