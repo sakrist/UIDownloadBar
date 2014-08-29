@@ -8,17 +8,23 @@
 
 #import "UIDownloadBar.h"
 
+@interface UIDownloadBar () {
+    NSString			*localFilename;
+	NSURL				*downloadUrl;
+	float				bytesReceived;
+	long long			expectedBytes;
+	
+	BOOL				operationFinished, operationFailed, operationBreaked;
+
+	FILE				*downFile;
+    
+    NSInteger           _timeOut;
+}
+
+@end
 
 @implementation UIDownloadBar
 
-@synthesize DownloadRequest,
-DownloadConnection,
-receivedData,
-delegate,
-percentComplete,
-operationIsOK,
-appendIfExist,
-possibleFilename;
 
 - (void) forceStop {
 	operationBreaked = YES;
@@ -32,32 +38,46 @@ possibleFilename;
 	
 	[request addValue: [NSString stringWithFormat: @"bytes=%.0f-", bytesReceived ] forHTTPHeaderField: @"Range"];	
 	
-	DownloadConnection = [NSURLConnection connectionWithRequest:request
+	_downloadConnection = [NSURLConnection connectionWithRequest:request
 												  delegate: self];	
 }
 
 
-- (UIDownloadBar *)initWithURL:(NSURL *)fileURL progressBarFrame:(CGRect)frame timeout:(NSInteger)timeout delegate:(id<UIDownloadBarDelegate>)theDelegate {
+- (UIDownloadBar *)initWithURL:(NSURL *)fileURL
+                         frame:(CGRect)frame
+                       timeout:(NSInteger)timeout
+                      delegate:(id<UIDownloadBarDelegate>)theDelegate {
 	self = [super initWithFrame:frame];
 	if(self) {
 		self.delegate = theDelegate;
+        _timeOut = timeout;
 		downloadUrl = fileURL;
-		bytesReceived = percentComplete = 0;
+		bytesReceived = _percentComplete = 0;
 		localFilename = [[[fileURL absoluteString] lastPathComponent] copy];
-		receivedData = [[NSMutableData alloc] initWithLength:0];
+		_receivedData = [[NSMutableData alloc] initWithLength:0];
 		self.progress = 0.0;
 		self.backgroundColor = [UIColor clearColor];
-		DownloadRequest = [[NSURLRequest alloc] initWithURL:fileURL cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:timeout];
-		DownloadConnection = [[NSURLConnection alloc] initWithRequest:DownloadRequest delegate:self startImmediately:YES];
-				
-		if(DownloadConnection == nil) {
-			[self.delegate downloadBar:self didFailWithError:[NSError errorWithDomain:@"UIDownloadBar Error" code:1 userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"NSURLConnection Failed", NSLocalizedDescriptionKey, nil]]];
-		}
-	}
+        
+    }
 	
 	return self;
 }
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+
+
+- (void) startDownload {
+    _downloadRequest = [[NSURLRequest alloc] initWithURL:downloadUrl cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:_timeOut];
+    _downloadConnection = [[NSURLConnection alloc] initWithRequest:_downloadRequest delegate:self startImmediately:YES];
+    
+    if(_downloadConnection == nil) {
+        if ([self.delegate respondsToSelector:@selector(downloadBar:didFailWithError:)]) {
+            NSError *error = [NSError errorWithDomain:@"UIDownloadBar Error" code:1 userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"NSURLConnection Failed", NSLocalizedDescriptionKey, nil]];
+            [self.delegate downloadBar:self didFailWithError:error];
+        }
+    }
+}
+
+
+- (void) connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
 
 	if (!operationBreaked) {
 			
@@ -68,11 +88,13 @@ possibleFilename;
 		
 		if(expectedBytes != NSURLResponseUnknownLength) {
 			self.progress = ((bytesReceived/(float)expectedBytes)*100)/100;
-			percentComplete = self.progress*100;
+			_percentComplete = self.progress*100;
 		}
 			//NSLog(@" Data receiving... Percent complete: %f", percentComplete);
 		
-		[delegate downloadBarUpdated:self];
+        if ([_delegate respondsToSelector:@selector(downloadBarUpdated:)]) {
+            [_delegate downloadBarUpdated:self];
+        }
 	
 	} else {
 		[connection cancel];
@@ -82,9 +104,10 @@ possibleFilename;
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-	[self.delegate downloadBar:self didFailWithError:error];
+    if ([self.delegate respondsToSelector:@selector(downloadBar:didFailWithError:)]) {
+        [self.delegate downloadBar:self didFailWithError:error];
+    }
 	operationFailed = YES;
-	[connection release];
 }
 
 
@@ -119,19 +142,16 @@ possibleFilename;
 }
 
 
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-	[self.delegate downloadBar:self didFinishWithData:self.receivedData suggestedFilename:localFilename];
+- (void) connectionDidFinishLoading:(NSURLConnection *)connection {
+    if ([self.delegate respondsToSelector:@selector(downloadBar:didFinishWithData:suggestedFilename:)]) {
+        	[self.delegate downloadBar:self didFinishWithData:self.receivedData suggestedFilename:localFilename];
+    }
 	operationFinished = YES;
-	NSLog(@"Connection did finish loading...");
 }
 
 
-- (void)dealloc {
-	[possibleFilename release];
-	[localFilename release];
-	[receivedData release];
-	[DownloadRequest release];
-	[super dealloc];
+- (void) dealloc {
+    [_downloadConnection cancel];
 }
 
 @end

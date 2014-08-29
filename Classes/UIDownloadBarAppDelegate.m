@@ -11,30 +11,22 @@
 
 @implementation UIDownloadBarAppDelegate
 
-@synthesize window;
-
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
     
-    // Add the tab bar controller's current view as a subview of the window
-	
-	
-	bar = [[UIDownloadBar alloc] initWithURL:[NSURL URLWithString:@"https://dl-ssl.google.com/chrome/mac/stable/GGRM/googlechrome.dmg"]
-							progressBarFrame:CGRectMake(30, 100, 200, 20)
-									 timeout:15 
-									delegate:self];
-	
-	[window addSubview:bar];
-	[bar release];
+
+	UIDownloadBar *bar = [[UIDownloadBar alloc] initWithURL:[NSURL URLWithString:@"https://dl-ssl.google.com/chrome/mac/stable/GGRM/googlechrome.dmg"]
+                                                      frame:CGRectMake(30, 100, 200, 20)
+                                                    timeout:15
+                                                   delegate:self];
+	[[self window] addSubview:bar];
+    [bar startDownload];
 	
 }
 
-- (void)applicationWillTerminate:(UIApplication *)application{
-}
-
-
-
-- (void)downloadBar:(UIDownloadBar *)downloadBar didFinishWithData:(NSData *)fileData suggestedFilename:(NSString *)filename {
+- (void)downloadBar:(UIDownloadBar *)downloadBar
+  didFinishWithData:(NSData *)fileData
+  suggestedFilename:(NSString *)filename {
 	NSLog(@"%@", filename);
 }
 
@@ -42,7 +34,14 @@
 	NSLog(@"%@", error);
 }
 
-- (void)downloadBarUpdated:(UIDownloadBar *)downloadBar {}
+- (void)downloadBarUpdated:(UIDownloadBar *)downloadBar {
+    
+}
+
+- (void)applicationWillTerminate:(UIApplication *)application {
+    
+}
+
 
 
 
@@ -59,10 +58,6 @@
 */
 
 
-- (void)dealloc {
-    [window release];
-    [super dealloc];
-}
 
 @end
 

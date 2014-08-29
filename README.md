@@ -1,4 +1,4 @@
-UIDownloadBar subclassed UIProgressView
+UIDownloadBar subclass of UIProgressView. Basically this class has NSURLRequest and NSURLConnection inside for download.
 
 Screenshot:
 
@@ -15,8 +15,8 @@ How to use:
 									 timeout:15 
 									delegate:self];
 
-	[window addSubview:bar];
-	[bar release];
+	[view addSubview:bar];
+	[bar startDownload];
 
 }
 
@@ -32,6 +32,11 @@ How to use:
 
 }
 ```
+---
+Version 1.3
+
+Added support for ARC.
+Improved delegate
 
 ---
 
@@ -41,7 +46,7 @@ License: BSD
 
 Author: John (aka Gojohnnyboi) in 2009
 
-Updated: Vladimir (aka SAKrisT) in 2011
+Improved : Vladimir (aka SAKrisT) in 2011
 
 - - - 
 

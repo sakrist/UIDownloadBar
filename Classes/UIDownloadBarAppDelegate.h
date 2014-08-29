@@ -11,11 +11,7 @@
 
 
 
-@interface UIDownloadBarAppDelegate : NSObject <UIApplicationDelegate, UIDownloadBarDelegate> {
-    UIWindow *window;
-	
-	UIDownloadBar *bar;
-}
+@interface UIDownloadBarAppDelegate : NSObject <UIApplicationDelegate, UIDownloadBarDelegate>
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 
