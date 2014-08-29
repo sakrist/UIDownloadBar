@@ -50,7 +50,7 @@ Improved : Vladimir (aka SAKrisT) in 2011
 
 - - - 
 
-Blog Post: http://www.developers-life.com/sample-usage-uidownloadbar.html
+Blog Post: http://www.developers-life.com/progress-bar-download-file-on-iphone.html
 
 Info:
 Have fun while using and extending this package.
